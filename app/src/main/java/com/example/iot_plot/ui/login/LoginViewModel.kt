@@ -3,11 +3,15 @@ package com.example.iot_plot.ui.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
 import com.example.iot_plot.data.LoginRepository
 import com.example.iot_plot.data.Result
 
 import com.example.iot_plot.R
+import android.content.Intent
+
+import androidx.core.content.ContextCompat
+import com.example.iot_plot.MainActivity
+
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
@@ -17,9 +21,9 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
+    fun login(serverAddress: String, organization: String, token: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
+        val result = loginRepository.login(serverAddress, organization, token)
 
         if (result is Result.Success) {
             _loginResult.value =
@@ -29,27 +33,30 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    fun loginDataChanged(username: String, password: String) {
-        if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
-        } else if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
-        } else {
+    fun loginDataChanged(serverAddress: String, organization: String, token: String) {
+        if (!isAddressValid(serverAddress)) {
+            _loginForm.value = LoginFormState(addressError = R.string.invalid_address)
+        } else if (!isOrganizationValid(organization)) {
+            _loginForm.value = LoginFormState(organizationError = R.string.invalid_organization)
+        } else if(!isTokenValid(token)){
+            _loginForm.value = LoginFormState(tokenError = R.string.invalid_token)
+        }else{
             _loginForm.value = LoginFormState(isDataValid = true)
         }
     }
 
-    // A placeholder username validation check
-    private fun isUserNameValid(username: String): Boolean {
-        return if (username.contains('@')) {
-            Patterns.EMAIL_ADDRESS.matcher(username).matches()
-        } else {
-            username.isNotBlank()
-        }
+    private fun isAddressValid(address: String): Boolean {
+        //todo better check?
+        return address.isNotBlank()
     }
 
-    // A placeholder password validation check
-    private fun isPasswordValid(password: String): Boolean {
-        return password.length > 5
+    private fun isOrganizationValid(organization: String): Boolean {
+        //todo better check?
+        return organization.isNotBlank()
+    }
+
+    private fun isTokenValid(token: String): Boolean {
+        //todo better check?
+        return token.length > 5
     }
 }

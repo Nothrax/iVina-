@@ -126,16 +126,6 @@
                         android:textSize="20sp"
                         android:text="@string/login_text"
                         android:backgroundTint="@android:color/holo_green_light"/>
-
-                    <Button
-                        style="@style/TextAppearance.MaterialComponents.Button"
-                        android:id="@+id/reset_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAllCaps="false"
-                        android:textSize="20sp"
-                        android:text="@string/reset_text"
-                        android:backgroundTint="@android:color/holo_green_light"/>
                 </LinearLayout>
             </LinearLayout>
 

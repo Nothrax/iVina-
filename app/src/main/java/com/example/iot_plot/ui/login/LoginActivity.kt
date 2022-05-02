@@ -1,6 +1,7 @@
 package com.example.iot_plot.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.example.iot_plot.MainActivity
 import com.example.iot_plot.databinding.ActivityLoginBinding
 
 import com.example.iot_plot.R
@@ -27,10 +30,14 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*val username = binding.username
-        val password = binding.password
-        val login = binding.login
-        val loading = binding.loading
+        //todo store values
+        val serverAddress = binding.apiAddressField
+        val organization = binding.organizationField
+        val token = binding.tokenField
+        val saveLogin = binding.saveLoginCheck
+        val login = binding.loginButton
+        val loading = binding.loginProgress
+
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -38,14 +45,16 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
 
-            // disable login button unless both username / password is valid
             login.isEnabled = loginState.isDataValid
 
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
+            if (loginState.addressError != null) {
+                serverAddress.error = getString(loginState.addressError)
             }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
+            if (loginState.organizationError != null) {
+                organization.error = getString(loginState.organizationError)
+            }
+            if (loginState.tokenError != null) {
+                token.error = getString(loginState.tokenError)
             }
         })
 
@@ -58,25 +67,41 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
         })
 
-        username.afterTextChanged {
+        serverAddress.afterTextChanged {
             loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
+                serverAddress.text.toString(),
+                organization.text.toString(),
+                token.text.toString()
             )
         }
 
-        password.apply {
+        organization.afterTextChanged {
+            loginViewModel.loginDataChanged(
+                serverAddress.text.toString(),
+                organization.text.toString(),
+                token.text.toString()
+            )
+        }
+
+        token.afterTextChanged {
+            loginViewModel.loginDataChanged(
+                serverAddress.text.toString(),
+                organization.text.toString(),
+                token.text.toString()
+            )
+        }
+
+        token.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
+                    serverAddress.text.toString(),
+                    organization.text.toString(),
+                    token.text.toString()
                 )
             }
 
@@ -84,8 +109,9 @@ class LoginActivity : AppCompatActivity() {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
+                            serverAddress.text.toString(),
+                            organization.text.toString(),
+                            token.text.toString()
                         )
                 }
                 false
@@ -93,18 +119,28 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                loginViewModel.login(
+                    serverAddress.text.toString(),
+                    organization.text.toString(),
+                    token.text.toString()
+                )
             }
-        }*/
+        }
+        ///set values for the first time
+        loginViewModel.loginDataChanged(
+            serverAddress.text.toString(),
+            organization.text.toString(),
+            token.text.toString()
+        )
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
+        val loginSucess = getString(R.string.login_sucess)
         // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
-            "$welcome $displayName",
+            loginSucess,
             Toast.LENGTH_LONG
         ).show()
     }
