@@ -1,7 +1,8 @@
 package com.example.iot_plot.ui.login
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -13,13 +14,16 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.example.iot_plot.MainActivity
 import com.example.iot_plot.databinding.ActivityLoginBinding
 
 import com.example.iot_plot.R
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+
 
 class LoginActivity : AppCompatActivity() {
+    private val sharedPrefFile = "kotlinsharedpreference"
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
@@ -30,11 +34,15 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //todo store values
+
+        val policy = ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        updateFieldsFromPreferences()
+
         val serverAddress = binding.apiAddressField
         val organization = binding.organizationField
         val token = binding.tokenField
-        val saveLogin = binding.saveLoginCheck
         val login = binding.loginButton
         val loading = binding.loginProgress
 
@@ -67,8 +75,6 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
             }
         })
 
@@ -118,6 +124,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
+                updatePreferences()
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(
                     serverAddress.text.toString(),
@@ -136,17 +143,48 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val loginSucess = getString(R.string.login_sucess)
+        val loginSuccess = getString(R.string.login_sucess)
         // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
-            loginSucess,
+            loginSuccess,
             Toast.LENGTH_LONG
         ).show()
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateFieldsFromPreferences(){
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
+        binding.apiAddressField.setText(sharedPreferences.getString("PREF_API_ADDRESS",""))
+        binding.tokenField.setText(sharedPreferences.getString("PREF_TOKEN",""))
+        binding.organizationField.setText(sharedPreferences.getString("PREF_ORGANIZATION",""))
+        binding.saveLoginCheck.isChecked = sharedPreferences.getBoolean("PREF_CHECK",false)
+    }
+
+    private fun updatePreferences(){
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
+
+        val editor:SharedPreferences.Editor =  sharedPreferences.edit()
+        if(binding.saveLoginCheck.isChecked){
+            editor.putString("PREF_API_ADDRESS", binding.apiAddressField.getText().toString())
+            editor.putString("PREF_TOKEN", binding.tokenField.getText().toString())
+            editor.putString("PREF_ORGANIZATION", binding.organizationField.getText().toString())
+            editor.putBoolean("PREF_CHECK", binding.saveLoginCheck.isChecked)
+            editor.apply()
+        }else{
+            editor.putString("PREF_API_ADDRESS", "")
+            editor.putString("PREF_TOKEN", "")
+            editor.putString("PREF_ORGANIZATION", "")
+            editor.putBoolean("PREF_CHECK", false)
+            editor.apply()
+        }
     }
 }
 
