@@ -9,4 +9,21 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_login">IOT Plot</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="login_sucess">"Přihlášení proběhlo úspěšně!"</string>
+    <string name="invalid_address">Špatná adresa serveru</string>
+    <string name="invalid_organization">Pole organizace nesmí být prázdné</string>
+    <string name="invalid_token">Špatný token</string>
+    <string name="login_failed">"Přihlášení nebylo úspěšné"</string>
+    <string name="progress_login_text">Probíhá přihlašování…</string>
+    <string name="login_text">Přihlášení</string>
+    <string name="api_address_hint_text">Adresa server</string>
+    <string name="organization_hint_text">Účet</string>
+    <string name="token_hint_text">Přihlašovací token</string>
+    <string name="save_login_text">Uložit přihlašovací údaje</string>
+    <string name="reset_text">Reset</string>
 </resources>

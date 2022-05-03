@@ -22,12 +22,12 @@ Friend of mine owns a multiple bee hives. He has to weight them multiple times a
 
 ## Time plan
 
-* 3h - project planning (this file)
+* 3h - project planning (this file) - reality 4h
 * 3h - influx data model
 * 3h - python fake sensor for data generation
 * 3h - influx deployment
-* 4h - android ui mock
-* 3h - user login window
+* 4h - android ui mock - reality 5h
+* 3h - user login window - reality 4h
 * 4h - main menu window
 * 4h - influx connectivity
 * 4h - graph plot functionality and graph window
