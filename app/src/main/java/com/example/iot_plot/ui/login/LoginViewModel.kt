@@ -8,9 +8,13 @@ import com.example.iot_plot.data.Result
 
 import com.example.iot_plot.R
 import android.content.Intent
+import android.os.SystemClock
 
 import androidx.core.content.ContextCompat
 import com.example.iot_plot.MainActivity
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
@@ -21,17 +25,18 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-
+    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
     fun login(serverAddress: String, organization: String, token: String) {
-        // can be launched in a separate asynchronous job
-        val result = loginRepository.login(serverAddress, organization, token)
-
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(apiAddress = serverAddress, token = token, organization = organization))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+        executor.execute{
+            //only visual
+            SystemClock.sleep(3000)
+            val result = loginRepository.login(serverAddress, organization, token)
+            if (result is Result.Success) {
+                _loginResult.postValue(LoginResult(success = LoggedInUserView(apiAddress = serverAddress, token = token, organization = organization)))
+            } else {
+                _loginResult.postValue(LoginResult(error = R.string.login_failed))
+            }
         }
     }
 
