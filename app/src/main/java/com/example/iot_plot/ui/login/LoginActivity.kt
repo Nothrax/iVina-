@@ -20,6 +20,7 @@ import com.example.iot_plot.databinding.ActivityLoginBinding
 import com.example.iot_plot.R
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.os.SystemClock
 
 
 class LoginActivity : AppCompatActivity() {
@@ -44,7 +45,8 @@ class LoginActivity : AppCompatActivity() {
         val organization = binding.organizationField
         val token = binding.tokenField
         val login = binding.loginButton
-        val loading = binding.loginProgress
+        val loadingScreen = binding.loginProgress
+        val loginScreen = binding.loginWindow
 
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
@@ -69,7 +71,6 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
-            loading.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
             }
@@ -124,8 +125,12 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
+                //todo run in thread
+
                 updatePreferences()
-                loading.visibility = View.VISIBLE
+                loginScreen.visibility = View.GONE
+                loadingScreen.visibility = View.VISIBLE
+
                 loginViewModel.login(
                     serverAddress.text.toString(),
                     organization.text.toString(),
@@ -156,6 +161,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+
+        val loadingScreen = binding.loginProgress
+        val loginScreen = binding.loginWindow
+        loginScreen.visibility = View.VISIBLE
+        loadingScreen.visibility = View.GONE
     }
 
     private fun updateFieldsFromPreferences(){
