@@ -20,6 +20,9 @@ import com.example.iot_plot.databinding.ActivityLoginBinding
 import com.example.iot_plot.R
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.os.SystemClock
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 class LoginActivity : AppCompatActivity() {
@@ -34,17 +37,12 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        val policy = ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-
         updateFieldsFromPreferences()
 
         val serverAddress = binding.apiAddressField
         val organization = binding.organizationField
         val token = binding.tokenField
         val login = binding.loginButton
-        val loading = binding.loginProgress
 
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
@@ -69,7 +67,6 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
-            loading.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
             }
@@ -124,8 +121,11 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
+                //todo run in thread
+
                 updatePreferences()
-                loading.visibility = View.VISIBLE
+                showLoadingScreen(true)
+
                 loginViewModel.login(
                     serverAddress.text.toString(),
                     organization.text.toString(),
@@ -144,18 +144,32 @@ class LoginActivity : AppCompatActivity() {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val loginSuccess = getString(R.string.login_sucess)
-        // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
             loginSuccess,
             Toast.LENGTH_LONG
         ).show()
+        showLoadingScreen(false)
+
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+        showLoadingScreen(false)
+    }
+
+    private fun showLoadingScreen(show: Boolean){
+        val loadingScreen = binding.loginProgress
+        val loginScreen = binding.loginWindow
+        if(show){
+            loginScreen.visibility = View.GONE
+            loadingScreen.visibility = View.VISIBLE
+        }else{
+            loginScreen.visibility = View.VISIBLE
+            loadingScreen.visibility = View.GONE
+        }
     }
 
     private fun updateFieldsFromPreferences(){
