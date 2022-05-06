@@ -1,0 +1,4 @@
+http-bind-address: ":8042"
+engine-path: /var/lib/influxdb2/engine
+bolt-path: /var/lib/influxdb2/influxd.bolt
+
