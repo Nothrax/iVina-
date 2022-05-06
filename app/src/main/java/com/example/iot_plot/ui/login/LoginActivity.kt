@@ -121,8 +121,6 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
-                //todo run in thread
-
                 updatePreferences()
                 showLoadingScreen(true)
 
