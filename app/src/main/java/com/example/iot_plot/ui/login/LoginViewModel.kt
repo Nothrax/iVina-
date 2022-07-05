@@ -7,12 +7,7 @@ import com.example.iot_plot.data.LoginRepository
 import com.example.iot_plot.data.Result
 
 import com.example.iot_plot.R
-import android.content.Intent
-import android.os.SystemClock
 
-import androidx.core.content.ContextCompat
-import com.example.iot_plot.MainActivity
-import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -30,7 +25,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     fun login(serverAddress: String, organization: String, token: String) {
         executor.execute{
             //only visual
-            SystemClock.sleep(3000)
+            //SystemClock.sleep(3000)
             val result = loginRepository.login(serverAddress, organization, token)
             if (result is Result.Success) {
                 _loginResult.postValue(LoginResult(success = LoggedInUserView(apiAddress = serverAddress, token = token, organization = organization)))

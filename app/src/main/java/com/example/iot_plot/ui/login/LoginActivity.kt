@@ -14,15 +14,10 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
-import com.example.iot_plot.MainActivity
+import com.example.iot_plot.ui.main.MainActivity
 import com.example.iot_plot.databinding.ActivityLoginBinding
 
 import com.example.iot_plot.R
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
-import android.os.SystemClock
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 
 class LoginActivity : AppCompatActivity() {

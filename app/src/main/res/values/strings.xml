@@ -14,4 +14,17 @@
     <string name="token_hint_text">Přihlašovací token</string>
     <string name="save_login_text">Uložit přihlašovací údaje</string>
     <string name="reset_text">Reset</string>
+    <string name="graph_choose">Výběr grafu</string>
+    <string name="create_graph">Vytvořit graf</string>
+    <string name="delete_graph">Smazat graf</string>
+    <string name="show_graph">Zobrazit graf</string>
+    <string name="bucket_spinner_text">Účet</string>
+    <string name="location_spinner_text">Místo</string>
+    <string name="device_spinner_text">Zařízení</string>
+    <string name="measurement_spinner_text">Měření</string>
+    <string name="time_from_text">Od</string>
+    <string name="date_text">Datum</string>
+    <string name="time_text">Čas</string>
+    <string name="time_to_text">Do</string>
+    <string name="save_graph_button">Uložit graf</string>
 </resources>
