@@ -28,12 +28,12 @@ Friend of mine owns a multiple bee hives. He has to weight them multiple times a
 * 3h - influx deployment 4h
 * 4h - android ui mock - reality 5h
 * 3h - user login window - reality 4h
-* 4h - main menu window
-* 4h - influx connectivity
-* 4h - graph plot functionality and graph window
-* 4h - consistent data storage for user settings
-* 4h - creation of frequent graphs
-* 3h - user testing
+* 4h - main menu window - reality 3h
+* 4h - influx connectivity - reality 5h
+* 4h - graph plot functionality and graph window - reality 2h
+* 4h - consistent data storage for user settings - reality 3h
+* 4h - creation of frequent graphs - reality - 5h
+* 3h - user testing - reality 4h
 
 ## Questions to ask
 * How big time window is needed in graph?
