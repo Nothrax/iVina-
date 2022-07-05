@@ -32,6 +32,8 @@ import com.jjoe64.graphview.LegendRenderer
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 
 
 class MainActivity : AppCompatActivity() {
@@ -61,6 +63,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val policy = ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

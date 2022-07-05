@@ -15,7 +15,7 @@ class InfluxViewModel(private val influxRepository: InfluxRepository) : ViewMode
     private val _influxResult = MutableLiveData<InfluxResult>()
     val influxResult: LiveData<InfluxResult> = _influxResult
 
-    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val executor: ExecutorService = Executors.newCachedThreadPool()
 
     fun login(serverAddress: String, organization: String, token: String) {
         executor.execute{

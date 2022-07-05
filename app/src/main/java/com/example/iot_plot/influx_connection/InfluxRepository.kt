@@ -2,6 +2,8 @@ package com.example.iot_plot.influx_connection
 
 
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -149,9 +151,13 @@ class InfluxRepository {
 
             try {
                 val results = influxDBClient.getQueryKotlinApi().query(query)
-
                 runBlocking {
                     launch {
+                        results.consumeEach { list.add(Value(
+                            it.values["_field"] as String,
+                            it.values["_value"] as Double,
+                            it.values["_time"] as Instant
+                        )) }
                         val resultList = results.toList()
                         for (result in resultList) {
                             list.add(
