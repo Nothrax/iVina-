@@ -144,7 +144,16 @@ class LoginActivity : AppCompatActivity() {
         ).show()
         showLoadingScreen(false)
 
+        val serverAddress = binding.apiAddressField
+        val organization = binding.organizationField
+        val token = binding.tokenField
+
         val intent = Intent(this, MainActivity::class.java)
+        val b = Bundle()
+        b.putString("address", serverAddress.text.toString())
+        b.putString("token", token.text.toString())
+        b.putString("organization", organization.text.toString())
+        intent.putExtras(b)
         startActivity(intent)
     }
 

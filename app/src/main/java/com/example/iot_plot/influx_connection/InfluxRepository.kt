@@ -1,4 +1,5 @@
-package com.example.iotapp
+package com.example.iot_plot.influx_connection
+
 
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
 import kotlinx.coroutines.channels.*
@@ -10,17 +11,15 @@ import kotlin.collections.ArrayList
 
 data class Value(val measurement: String, val value: Double, val time: Instant)
 
-class InfluxRequests(address: String, token: String, organization: String) {
-    private var address_: String = address
-    private var token_: String = token
-    private var organization_: String = organization
+class InfluxRepository {
 
 
 
     fun makeBucketListRequest(
+        address: String, token: String, organization: String,
     ): ArrayList<String> {
         val influxDBClient =
-            InfluxDBClientKotlinFactory.create(address_, token_.toCharArray(), organization_)
+            InfluxDBClientKotlinFactory.create(address, token.toCharArray(), organization)
         val query = "buckets()" +
                 " |> drop(columns: [\"_stop\", \"time\", \"id\", \"organizationID\", \"retentionPolicy\", \"retentionPeriod\"])"
         val results = influxDBClient.getQueryKotlinApi().query(query)
@@ -35,11 +34,11 @@ class InfluxRequests(address: String, token: String, organization: String) {
     }
 
     fun makeLocationListRequest(
+        address: String, token: String, organization: String,
         bucket: String,
-        callback: (ArrayList<String>) -> Unit
-    ) {
+    ): ArrayList<String> {
         val influxDBClient =
-            InfluxDBClientKotlinFactory.create(address_, token_.toCharArray(), organization_)
+            InfluxDBClientKotlinFactory.create(address, token.toCharArray(), organization)
         val query = "from(bucket: \"" + bucket + "\")\n" +
                 "  |> range(start: 0, stop: 999999999999999999)\n" +
                 "  |> drop(columns: [\"_start\", \"_stop\", \"_field\",\"_measurement\", \"_value\"])\n" +
@@ -56,16 +55,16 @@ class InfluxRequests(address: String, token: String, organization: String) {
             // handler
         }
 
-        callback(list)
+        return list
     }
 
     fun makeDeviceListRequest(
+        address: String, token: String, organization: String,
         bucket: String,
-        location: String,
-        callback: (ArrayList<String>) -> Unit
-    ) {
+        location: String
+    ): ArrayList<String> {
         val influxDBClient =
-            InfluxDBClientKotlinFactory.create(address_, token_.toCharArray(), organization_)
+            InfluxDBClientKotlinFactory.create(address, token.toCharArray(), organization)
         val query = "from(bucket: \"" + bucket + "\")\n" +
                 "  |> range(start: 0, stop: 999999999999999999)\n" +
                 "  |> drop(columns: [\"_field\", \"_start\", \"_stop\"])\n" +
@@ -83,18 +82,17 @@ class InfluxRequests(address: String, token: String, organization: String) {
             // handler
         }
 
-
-        callback(list)
+        return list
     }
 
     fun makeMeasurementListRequest(
+        address: String, token: String, organization: String,
         bucket: String,
         location: String,
         device: String,
-        callback: (ArrayList<String>) -> Unit
-    ) {
+    ):ArrayList<String> {
         val influxDBClient =
-            InfluxDBClientKotlinFactory.create(address_, token_.toCharArray(), organization_)
+            InfluxDBClientKotlinFactory.create(address, token.toCharArray(), organization)
         val query = "from(bucket: \"" + bucket + "\")\n" +
                 "  |> range(start: 0, stop: 999999999999999999)\n" +
                 "  |> filter(fn: (r) => r[\"location\"] == \"" + location + "\")\n" +
@@ -114,28 +112,28 @@ class InfluxRequests(address: String, token: String, organization: String) {
         }
 
 
-        callback(list)
+        return list
     }
 
     fun makeGraphRequest(
+        address: String, token: String, organization: String,
         bucket: String,
         location: String,
         device: String,
         measurements: List<String>,
         timeFrom: Calendar,
-        timeTo: Calendar,
-        callback: (ArrayList<Value>, List<String>) -> Unit
-    ) {
+        timeTo: Calendar
+    ): ArrayList<Value> {
 
         val list: ArrayList<Value> = ArrayList()
 
         if (measurements.isEmpty()) {
-            callback(list, measurements)
+            return list
         } else {
             val startTimestamp: Long = timeFrom.getTime().time / 1000
             val endTimestamp: Long = timeTo.getTime().time / 1000
             val influxDBClient =
-                InfluxDBClientKotlinFactory.create(address_, token_.toCharArray(), organization_)
+                InfluxDBClientKotlinFactory.create(address, token.toCharArray(), organization)
             var query = "from(bucket: \"" + bucket + "\")\n" +
                     "  |> range(start: " + startTimestamp + ", stop: " + endTimestamp + ")\n" +
                     "  |> filter(fn: (r) => r[\"_measurement\"] == \"" + device + "\")\n"
@@ -169,13 +167,13 @@ class InfluxRequests(address: String, token: String, organization: String) {
             } catch (e: java.lang.Exception) {
                 print("test")
             }
-            callback(list, measurements)
+            return list
         }
     }
 
 
-    fun makePingRequest(): Boolean {
-        val influxDBClient = InfluxDBClientKotlinFactory.create(address_, token_.toCharArray())
+    fun makePingRequest(address: String, token: String, organization: String): Boolean {
+        val influxDBClient = InfluxDBClientKotlinFactory.create(address, token.toCharArray())
         try {
             val response = influxDBClient.ping()
             influxDBClient.close()
